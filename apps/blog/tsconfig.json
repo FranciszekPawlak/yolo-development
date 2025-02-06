@@ -1,0 +1,12 @@
+{
+	"extends": "@repo/typescript-config/remix.json",
+	"compilerOptions": {
+		"types": ["@vercel/remix"],
+		"baseUrl": ".",
+		"paths": {
+			"~/*": ["./app/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
+}
