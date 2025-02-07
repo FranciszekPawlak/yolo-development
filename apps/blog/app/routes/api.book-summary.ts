@@ -11,7 +11,7 @@ export async function loader({ request }: { request: Request }) {
 		await sendEmail({
 			to: "box@franciszekpawlak.pl",
 			subject: "Book: summary request",
-			htmlContent: `<p>${title}:{author}</p>`,
+			htmlContent: `<p>${title}:${author}</p>`,
 		});
 	} catch (error) {
 		console.error("Failed to send email:", error);
