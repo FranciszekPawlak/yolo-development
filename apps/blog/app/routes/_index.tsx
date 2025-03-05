@@ -1,9 +1,9 @@
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+// import { useLoaderData } from "@remix-run/react";
 import type { LoaderFunctionArgs, MetaFunction } from "@vercel/remix";
 import { getWarFact } from "~/api/openai/warFact.server";
-import { Fact } from "~/components/home/Fact";
-import { Game } from "~/components/home/Game";
+// import { Fact } from "~/components/home/Fact";
+// import { Game } from "~/components/home/Game";
 import { Slogan } from "~/components/home/Slogan";
 import type { AiResult } from "~/types";
 import Links from "../components/home/Links";
@@ -72,14 +72,14 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-	const result = useLoaderData<AiResult>();
+	// const result = useLoaderData<AiResult>();
 	return (
 		<div>
 			<Me />
 			<Slogan />
 			<Links />
-			<Fact result={result} />
-			<Game />
+			{/* <Fact result={result} />
+			<Game /> */}
 		</div>
 	);
 }
