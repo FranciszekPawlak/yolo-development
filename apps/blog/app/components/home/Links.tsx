@@ -17,7 +17,7 @@ const StyledLink = ({
 export default function Links() {
 	return (
 		<div className="h-screen flex flex-col items-center justify-center">
-			<StyledLink to="/media/books">What I like</StyledLink>
+			<StyledLink to="/media/books">Stalking Zone</StyledLink>
 			<StyledLink to="/articles/overview">Articles</StyledLink>
 			<StyledLink target="_blank" to="https://github.com/FranciszekPawlak">
 				Github
