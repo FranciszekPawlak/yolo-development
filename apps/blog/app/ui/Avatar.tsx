@@ -1,4 +1,4 @@
-import me from "/me.png";
+import me from "/me.jpg";
 
 export const Avatar = ({ className }: { className: string }) => {
 	return (
