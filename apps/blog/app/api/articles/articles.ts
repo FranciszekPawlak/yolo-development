@@ -8,7 +8,7 @@ export async function getArticles() {
         'categories': categories[]->title,
         image,
         _createdAt,
-    }`;
+    } | order(_createdAt desc)`;
 	return await client.fetch<SanityDocument[]>(QUERY);
 }
 

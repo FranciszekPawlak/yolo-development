@@ -41,28 +41,28 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 				</h3>
 			),
 			h4: ({ children }) => (
-				<h4 className="cols-span-0 mt-4 mb-2 font-gothic text-2xl md:col-span-2">
+				<h4 className="cols-span-0 mt-4 mb-2 font-gothic text-2xl col-span-2 md:col-span-3">
 					{children}
 				</h4>
 			),
 			h5: ({ children }) => (
-				<h5 className="cols-span-0 mt-4 mb-2 font-gothic text-xl md:col-span-2">
+				<h5 className="cols-span-0 mt-4 mb-2 font-gothic text-xl col-span-2 md:col-span-3">
 					{children}
 				</h5>
 			),
 			h6: ({ children }) => (
-				<h6 className="cols-span-0 mt-4 mb-2 font-gothic text-lg md:col-span-2">
+				<h6 className="cols-span-0 mt-4 mb-2 font-gothic text-lg col-span-2 md:col-span-3">
 					{children}
 				</h6>
 			),
 			blockquote: ({ children }) => (
-				<blockquote className="cols-span-0 my-2 p-2 font-montserrat italic md:col-span-2">
+				<blockquote className="cols-span-0 my-2 p-2 font-montserrat italic col-span-2 md:col-span-3">
 					"{children}"
 				</blockquote>
 			),
 			normal: ({ children }) => {
 				return (
-					<p className="cols-span-0 my-2 font-montserrat md:col-span-2">
+					<p className="cols-span-0 my-2 font-montserrat col-span-2 md:col-span-3">
 						{children}&nbsp;
 					</p>
 				);
@@ -77,7 +77,7 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 					<img
 						className="w-full cursor-pointer transition-transform hover:scale-[1.02]"
 						alt={value.alt || "Article image"}
-						src={getImage(value).width(500).fit("fill").url()}
+						src={getImage(value).width(260).fit("fill").url()}
 						onClick={() => handleImageClick(imageIndex)}
 						onKeyDown={(e) => e.key === "Enter" && handleImageClick(imageIndex)}
 					/>
@@ -111,7 +111,7 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 
 	return (
 		<>
-			<article className="grid grid-cols-1 md:grid-cols-2">
+			<article className="grid grid-cols-2 md:grid-cols-3">
 				<PortableText value={blocks} components={components} />
 			</article>
 			{modalOpen && (
