@@ -1,4 +1,9 @@
-import { type KeyboardEvent, type MouseEvent, useEffect } from "react";
+import {
+	type KeyboardEvent,
+	type MouseEvent,
+	useEffect,
+	useState,
+} from "react";
 import { getImage } from "~/api/image";
 
 interface ImageModalProps {
@@ -16,6 +21,16 @@ export const ImageModal = ({
 	onNext,
 	onPrevious,
 }: ImageModalProps) => {
+	const [isVisible, setIsVisible] = useState(true);
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setIsVisible(false);
+		}, 5000);
+
+		return () => clearTimeout(timer);
+	}, []);
+
 	const handleBackdropClick = (e: MouseEvent) => {
 		if (e.target === e.currentTarget) onClose();
 	};
@@ -53,13 +68,54 @@ export const ImageModal = ({
 
 	const currentImage = images[currentIndex];
 
+	const handleSwipe = (startX: number, endX: number) => {
+		if (endX - startX > 50) {
+			onPrevious();
+		} else if (startX - endX > 50) {
+			onNext();
+		}
+	};
+
+	let startX: number;
+
+	const handleTouchStart = (e: TouchEvent) => {
+		startX = e.touches[0].clientX;
+	};
+
+	const handleTouchMove = (e: TouchEvent) => {
+		const endX = e.touches[0].clientX;
+		handleSwipe(startX, endX);
+	};
+
+	const handleMouseDown = (e: MouseEvent) => {
+		startX = e.clientX;
+		const handleMouseMove = (e: MouseEvent) => {
+			handleSwipe(startX, e.clientX);
+		};
+		const handleMouseUp = () => {
+			document.removeEventListener("mousemove", handleMouseMove);
+			document.removeEventListener("mouseup", handleMouseUp);
+		};
+		document.addEventListener("mousemove", handleMouseMove);
+		document.addEventListener("mouseup", handleMouseUp);
+	};
+
 	return (
 		<dialog
 			className="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-black/85"
 			onClick={handleBackdropClick}
 			onKeyDown={handleBackdropKeyDown}
+			onTouchStart={handleTouchStart}
+			onTouchMove={handleTouchMove}
+			onMouseDown={handleMouseDown}
 			open
 		>
+			{isVisible && (
+				<div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-[60] text-white text-xl bg-black/50 p-2 rounded flex lg:hidden">
+					swipe <div className="animate-swipe">👆🏼</div>
+				</div>
+			)}
+
 			<button
 				type="button"
 				onClick={onClose}
