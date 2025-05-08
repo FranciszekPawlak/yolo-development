@@ -97,8 +97,9 @@ This document outlines a step-by-step plan for implementing the Newsletter Agent
 
 ### Step 9: Cron Job Handlers
 1. Create handlers for Vercel cron jobs
-2. Implement job scheduling logic
-3. Configure job triggers for different processes
+2. Implement hourly job trigger for article checking and scraping
+3. Implement daily job trigger for summarization
+4. Implement weekly job triggers for newsletter generation and delivery
 
 ## Phase 4: Email Integration (Week 4)
 
@@ -128,9 +129,11 @@ This document outlines a step-by-step plan for implementing the Newsletter Agent
 ## Phase 5: Queue Workers (Week 5)
 
 ### Step 13: Scraping Worker
-1. Implement worker to process scraping queue
-2. Develop error handling and retry logic
-3. Set up logging and monitoring
+1. Implement worker to process hourly scraping queue
+2. Add logic to check the latest article on blog homepages
+3. Implement article content retrieval only for new articles
+4. Develop error handling and retry logic
+5. Set up logging and monitoring
 
 ### Step 14: Summarization Worker
 1. Create worker to process summarization queue

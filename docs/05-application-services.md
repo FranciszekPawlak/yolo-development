@@ -26,11 +26,11 @@ The application services represent the primary use cases of the system and orche
 
 ### ScraperSchedulingService
 
-**Responsibility**: Schedules and coordinates article scraping jobs.
+**Responsibility**: Schedules and coordinates hourly article scraping jobs.
 
 **Key Functions**:
 - `scheduleSourceScraping(sourceId)`: Schedules scraping for a specific source
-- `scheduleBatchScraping()`: Schedules scraping for all active sources
+- `scheduleHourlyScraping()`: Schedules scraping for all active sources every hour
 - `rescheduleFailedJobs()`: Reschedules jobs that previously failed
 - `checkJobStatus(jobId)`: Returns the status of a specific scraping job
 
@@ -41,12 +41,12 @@ The application services represent the primary use cases of the system and orche
 
 ### ArticleScraperService
 
-**Responsibility**: Handles the actual scraping of article content.
+**Responsibility**: Handles checking and scraping of article content.
 
 **Key Functions**:
-- `scrapeArticle(sourceId, url)`: Scrapes a specific article URL
-- `scrapeLatestFromSource(sourceId)`: Scrapes latest content from a source
-- `detectNewArticles(sourceId)`: Checks for new articles without full scraping
+- `checkLatestArticle(sourceId)`: Checks the blog homepage for the latest article
+- `scrapeArticleContent(sourceId, url)`: Retrieves the full content of a specific article URL
+- `isArticleInDatabase(url)`: Checks if an article URL already exists in the database
 - `sanitizeContent(rawContent)`: Cleans scraped content for storage
 
 **Dependencies**:

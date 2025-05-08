@@ -29,12 +29,13 @@ The system is organized into the following domain contexts:
 
 ## Process Flow
 
-1. Scheduled cron jobs trigger the scraping process for each configured source
+1. Scheduled cron jobs trigger the scraping process hourly for each configured source
 2. Article extraction tasks are queued in Upstash to bypass serverless execution limits
-3. New articles are stored in Supabase with metadata
-4. Summarization jobs process articles without existing summaries
-5. Newsletter generation combines recent summaries into a cohesive email
-6. Delivery services send the newsletter to subscribers via Brevo
+3. System checks if the latest article from each source is already stored in the database
+4. For new articles, the full content is retrieved and stored in Supabase with metadata
+5. Summarization jobs process articles without existing summaries
+6. Newsletter generation combines recent summaries into a cohesive email
+7. Delivery services send the newsletter to subscribers via Brevo
 
 ## Key Technical Challenges
 

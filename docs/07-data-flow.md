@@ -23,7 +23,7 @@ The system has four primary data flows:
 └─────┬────┘      └────────┬────────┘       └──────┬──────┘       └──────┬───────┘       └──────┬──────┘
       │                    │                       │                      │                      │
       │ Trigger            │                       │                      │                      │
-      │ Daily Scraping     │                       │                      │                      │
+      │ Hourly Scraping    │                       │                      │                      │
       │────────────────────>                       │                      │                      │
       │                    │                       │                      │                      │
       │                    │ Get Active Sources    │                      │                      │
@@ -44,7 +44,8 @@ The system has four primary data flows:
       │                    │                       │ Process Job          │                      │
       │                    │                       │──────────────────────>                      │
       │                    │                       │                      │                      │
-      │                    │                       │                      │ Scrape Latest Article│
+      │                    │                       │                      │ Check Latest Article │
+      │                    │                       │                      │ on Blog Homepage     │
       │                    │                       │                      │                      │
       │                    │                       │                      │──┐                   │
       │                    │                       │                      │  │                   │
@@ -57,7 +58,14 @@ The system has four primary data flows:
       │                    │                       │                      │ Return Result        │
       │                    │                       │                      │<─────────────────────│
       │                    │                       │                      │                      │
-      │                    │                       │                      │ If new, save Article │
+      │                    │                       │                      │ If new, retrieve     │
+      │                    │                       │                      │ full article content │
+      │                    │                       │                      │                      │
+      │                    │                       │                      │──┐                   │
+      │                    │                       │                      │  │                   │
+      │                    │                       │                      │<─┘                   │
+      │                    │                       │                      │                      │
+      │                    │                       │                      │ Save New Article     │
       │                    │                       │                      │─────────────────────>│
       │                    │                       │                      │                      │
       │                    │                       │                      │ Update Source        │
@@ -74,14 +82,15 @@ The system has four primary data flows:
 
 ### Process Steps
 
-1. **Trigger**: Vercel cron job triggers the scraping process daily
+1. **Trigger**: Vercel cron job triggers the scraping process hourly
 2. **Source Selection**: System retrieves all active sources from the database
 3. **Job Enqueueing**: For each source, a scraping job is added to the queue
 4. **Job Processing**: Queue worker picks up the job and initiates scraping
-5. **Content Scraping**: Playwright extracts content from the source
-6. **Duplication Check**: System checks if the article is already in the database
-7. **Storage**: New article is stored in the database if it doesn't exist
-8. **Source Update**: Source's last scraped timestamp is updated
+5. **Latest Article Check**: System checks the blog homepage for the latest article
+6. **Duplication Check**: System checks if the latest article is already in the database
+7. **Article Retrieval**: If the article is new, system enters the article page and extracts its full content
+8. **Storage**: New article is stored in the database
+9. **Source Update**: Source's last scraped timestamp is updated
 
 ## 2. Article Summarization Flow
 

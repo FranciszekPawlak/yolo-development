@@ -49,7 +49,7 @@ Upstash Queue will be used to manage asynchronous tasks:
 
 Cron jobs will be configured in Vercel to trigger various processes:
 
-1. **trigger-source-scraping**: Daily job to trigger article scraping from configured sources
+1. **trigger-source-scraping**: Hourly job to check and scrape latest articles from configured sources
 2. **trigger-summarization**: Daily job to summarize any unsummarized articles
 3. **trigger-newsletter-generation**: Weekly job to create newsletters
 4. **trigger-newsletter-delivery**: Weekly job to send newsletters
