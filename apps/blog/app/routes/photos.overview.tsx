@@ -1,18 +1,18 @@
 import { Link, useLoaderData } from "@remix-run/react";
-import { getArticles } from "~/api/articles/articles";
+import { getPhotos } from "~/api/articles/articles";
 import { getImage } from "~/api/image";
 import { Header } from "~/ui/Header";
 import { NothingToShow } from "~/ui/NothingToShow";
 
 export async function loader() {
-	return getArticles();
+	return getPhotos();
 }
 export default function Overview() {
 	const posts = useLoaderData<typeof loader>();
 
 	return (
 		<div className="mx-auto max-w-[800px]">
-			<Header title="Articles" />
+			<Header title="Photos" />
 			<div className="mt-8 flex flex-col">
 				{posts.length > 0 ? (
 					posts.map((article) => (
@@ -48,7 +48,7 @@ export default function Overview() {
 							</div>
 							<Link
 								className="font-montserrat text-white hover:underline"
-								to={`/articles/${article.slug}`}
+								to={`/photos/${article.slug}`}
 							>
 								<svg
 									className="size-6"

@@ -3,8 +3,18 @@ import { useEffect, useState } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 	const { pathname } = useLocation();
-	const backgroundVideo = pathname === "/articles/overview";
+	const backgroundVideo = pathname === "/photos/overview" || pathname === "/tech/overview";
 	const [showScrollTop, setShowScrollTop] = useState(false);
+
+	const getBackgroundVideo = () => {
+		if (pathname === "/photos/overview") {
+			return "/background/photo.mp4"
+		}
+		if (pathname === "/tech/overview") {
+			return "/background/tech.mp4"
+		}
+		return ""
+	}
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -28,10 +38,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 					loop
 					autoPlay
 					playsInline
-					id="japan traffic"
+					id="background video"
 					className="absolute inset-0 h-full w-full rounded-3xl object-cover opacity-30"
 				>
-					<source src="/backgroundVideo.mp4" type="video/mp4" />
+					<source src={getBackgroundVideo()} type="video/mp4" />
 				</video>
 			)}
 			<div className="relative z-10">{children}</div>

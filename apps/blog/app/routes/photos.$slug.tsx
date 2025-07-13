@@ -8,7 +8,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	if (!params.slug) {
 		throw new Response("Not Found", { status: 404 });
 	}
-	const article = (await getArticle(params.slug))[0];
+	const article = (await getArticle(params.slug, "photos"))[0];
 	if (!article) {
 		throw new Response("Not Found", { status: 404 });
 	}
@@ -21,7 +21,7 @@ export default function Article() {
 	return (
 		<div className="mx-auto max-w-[800px]">
 			<Link
-				to={"/articles/overview"}
+				to={"/photos/overview"}
 				className="inline-block cursor-pointer p-4 font-mono text-5xl duration-200 hover:scale-125"
 			>
 				{"<"}

@@ -18,7 +18,8 @@ export default function Links() {
 	return (
 		<div className="h-screen flex flex-col items-center justify-center">
 			<StyledLink to="/media/books">Stalking Zone</StyledLink>
-			<StyledLink to="/articles/overview">Articles</StyledLink>
+			<StyledLink to="/photos/overview">Photos</StyledLink>
+			<StyledLink to="/tech/overview">Tech</StyledLink>
 			<StyledLink target="_blank" to="https://github.com/FranciszekPawlak">
 				Github
 			</StyledLink>
@@ -27,9 +28,6 @@ export default function Links() {
 				to="https://www.linkedin.com/in/franciszekpawlak"
 			>
 				LinkedIn
-			</StyledLink>
-			<StyledLink target="_blank" to="https://x.com/FranekPawlak">
-				Twitter
 			</StyledLink>
 		</div>
 	);
