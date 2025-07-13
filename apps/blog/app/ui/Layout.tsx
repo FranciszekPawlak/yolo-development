@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 	const { pathname } = useLocation();
-	const backgroundVideo = pathname === "/articles/overview";
+	const backgroundVideo = pathname === "/photos/overview" || pathname === "/tech/overview";
 	const [showScrollTop, setShowScrollTop] = useState(false);
 
 	useEffect(() => {
