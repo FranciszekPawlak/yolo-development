@@ -20,6 +20,20 @@ export default defineType({
 			},
 		}),
 		defineField({
+			name: "type",
+			title: "Type",
+			type: "string",
+			options: {
+				list: [
+					{ title: "Photos", value: "photos" },
+					{ title: "Tech", value: "tech" },
+				],
+				layout: "dropdown",
+			},
+			initialValue: "photos",
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
 			name: "image",
 			title: "Image",
 			type: "image",
