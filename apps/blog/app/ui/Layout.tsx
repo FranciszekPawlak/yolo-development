@@ -92,15 +92,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
-	if (isLoading && backgroundVideo) {
-		return (
-			<div className="relative mx-4 my-4 min-h-[95vh] max-w-[1000px] rounded-3xl border-2 border-white bg-black p-4 text-white lg:mx-auto lg:p-8">
-				<div className="flex h-full min-h-[87vh] items-center justify-center">
-					<div className="flex flex-col items-center gap-4">
-						<div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-						<p className="text-sm opacity-70">Loading...</p>
-					</div>
-				</div>
+	return (
+		<div className="relative mx-4 my-4 min-h-[95vh] max-w-[1000px] rounded-3xl border-2 border-white bg-black p-4 text-white lg:mx-auto lg:p-8">
+			{/* Video element - always rendered when backgroundVideo is true */}
+			{backgroundVideo && (
 				<video
 					ref={videoRef}
 					muted
@@ -111,29 +106,29 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 					onCanPlayThrough={handleVideoLoad}
 					onLoadedData={handleVideoLoadedData}
 					onError={handleVideoError}
-					className="absolute inset-0 h-full w-full rounded-3xl object-cover opacity-0"
-				>
-					<source src={getBackgroundVideo()} type="video/mp4" />
-				</video>
-			</div>
-		);
-	}
-
-	return (
-		<div className="relative mx-4 my-4 min-h-[95vh] max-w-[1000px] rounded-3xl border-2 border-white bg-black p-4 text-white lg:mx-auto lg:p-8">
-			{backgroundVideo && videoLoaded && (
-				<video
-					muted
-					loop
-					autoPlay
-					playsInline
 					id="background video"
-					className="absolute inset-0 h-full w-full rounded-3xl object-cover opacity-30"
+					className={`absolute inset-0 h-full w-full rounded-3xl object-cover transition-opacity duration-300 ${videoLoaded && !isLoading ? 'opacity-30' : 'opacity-0'
+						}`}
 				>
 					<source src={getBackgroundVideo()} type="video/mp4" />
 				</video>
 			)}
+
+			{/* Main content */}
 			<div className="relative z-10">{children}</div>
+
+			{/* Loading mask - only visible during loading */}
+			<div
+				className={`absolute inset-0 z-20 flex h-full w-full items-center justify-center rounded-3xl bg-black transition-opacity duration-300 ${isLoading && backgroundVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
+					}`}
+			>
+				<div className="flex flex-col items-center gap-4">
+					<div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+					<p className="text-sm opacity-70">Loading...</p>
+				</div>
+			</div>
+
+			{/* Scroll to top button */}
 			{showScrollTop && (
 				<button
 					type="button"
