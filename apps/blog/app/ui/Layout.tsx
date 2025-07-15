@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 	const backgroundVideo = pathname === "/photos/overview" || pathname === "/tech/overview";
 	const [showScrollTop, setShowScrollTop] = useState(false);
 	const [videoLoaded, setVideoLoaded] = useState(false);
-	const [isLoading, setIsLoading] = useState(backgroundVideo);
+	const [isLoading, setIsLoading] = useState(true);
 	const videoRef = useRef<HTMLVideoElement>(null);
 
 	const getBackgroundVideo = () => {
@@ -94,7 +94,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 	return (
 		<div className="relative mx-4 my-4 min-h-[95vh] max-w-[1000px] rounded-3xl border-2 border-white bg-black p-4 text-white lg:mx-auto lg:p-8">
-			{/* Video element - always rendered when backgroundVideo is true */}
 			{backgroundVideo && (
 				<video
 					ref={videoRef}
@@ -114,10 +113,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 				</video>
 			)}
 
-			{/* Main content */}
 			<div className="relative z-10">{children}</div>
 
-			{/* Loading mask - only visible during loading */}
 			<div
 				className={`absolute inset-0 z-20 flex h-full w-full items-center justify-center rounded-3xl bg-black transition-opacity duration-300 ${isLoading && backgroundVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
 					}`}
@@ -128,7 +125,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 				</div>
 			</div>
 
-			{/* Scroll to top button */}
 			{showScrollTop && (
 				<button
 					type="button"
