@@ -42,7 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 					playsInline
 					preload="auto"
 					id="background video"
-					className="absolute inset-0 h-full w-full rounded-3xl object-cover opacity-30"
+					className="absolute inset-0 h-full w-full rounded-3xl object-cover opacity-40"
 				>
 					<source src={getBackgroundVideo()} type="video/mp4" />
 				</video>
