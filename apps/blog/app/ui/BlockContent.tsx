@@ -26,47 +26,67 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 	const components: Partial<PortableTextReactComponents> = {
 		block: {
 			h1: ({ children }) => (
-				<h1 className="col-span-2 mt-4 mb-2 font-gothic text-5xl">
+				<h1 className="col-span-2 md:col-span-3 mt-4 mb-2 font-gothic text-5xl">
 					{children}
 				</h1>
 			),
 			h2: ({ children }) => (
-				<h2 className="col-span-2 mt-4 mb-2 font-gothic text-4xl">
+				<h2 className="col-span-2 md:col-span-3 mt-4 mb-2 font-gothic text-4xl">
 					{children}
 				</h2>
 			),
 			h3: ({ children }) => (
-				<h3 className="col-span-2 mt-4 mb-2 font-gothic text-3xl">
+				<h3 className="col-span-2 md:col-span-3 mt-4 mb-2 font-gothic text-3xl">
 					{children}
 				</h3>
 			),
 			h4: ({ children }) => (
-				<h4 className="cols-span-0 mt-4 mb-2 font-gothic text-2xl col-span-2 md:col-span-3">
+				<h4 className="col-span-2 md:col-span-3 mt-4 mb-2 font-gothic text-2xl">
 					{children}
 				</h4>
 			),
 			h5: ({ children }) => (
-				<h5 className="cols-span-0 mt-4 mb-2 font-gothic text-xl col-span-2 md:col-span-3">
+				<h5 className="col-span-2 md:col-span-3 mt-4 mb-2 font-gothic text-xl">
 					{children}
 				</h5>
 			),
 			h6: ({ children }) => (
-				<h6 className="cols-span-0 mt-4 mb-2 font-gothic text-lg col-span-2 md:col-span-3">
+				<h6 className="col-span-2 md:col-span-3 mt-4 mb-2 font-gothic text-lg">
 					{children}
 				</h6>
 			),
 			blockquote: ({ children }) => (
-				<blockquote className="cols-span-0 my-2 p-2 font-montserrat italic col-span-2 md:col-span-3">
+				<blockquote className="col-span-2 md:col-span-3 my-2 p-2 font-montserrat italic">
 					"{children}"
 				</blockquote>
 			),
 			normal: ({ children }) => {
 				return (
-					<p className="cols-span-0 my-2 font-montserrat col-span-2 md:col-span-3">
+					<p className="col-span-2 md:col-span-3 my-2 font-montserrat">
 						{children}&nbsp;
 					</p>
 				);
 			},
+		},
+		list: {
+			bullet: ({ children }) => (
+				<ul className="col-span-2 md:col-span-3 my-2 ml-4 list-disc font-montserrat">
+					{children}
+				</ul>
+			),
+			number: ({ children }) => (
+				<ol className="col-span-2 md:col-span-3 my-2 ml-4 list-decimal font-montserrat">
+					{children}
+				</ol>
+			),
+		},
+		listItem: {
+			bullet: ({ children }) => (
+				<li className="my-1 font-montserrat">{children}</li>
+			),
+			number: ({ children }) => (
+				<li className="my-1 font-montserrat">{children}</li>
+			),
 		},
 		types: {
 			image: ({ value }: any) => {
