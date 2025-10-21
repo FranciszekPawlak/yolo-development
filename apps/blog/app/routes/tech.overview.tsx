@@ -13,6 +13,7 @@ export default function Overview() {
     return (
         <div className="mx-auto max-w-[800px]">
             <Header title="Tech" />
+            <span className="block text-xs text-center w-full">My texts are not written by AI 😮</span>
             <div className="mt-8 flex flex-col">
                 {posts.length > 0 ? (
                     posts.map((article) => (
