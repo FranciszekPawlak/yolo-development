@@ -1,13 +1,17 @@
 import {
 	type KeyboardEvent,
 	type MouseEvent,
+	type TouchEvent,
 	useEffect,
 	useState,
 } from "react";
 import { getImage } from "~/api/image";
 
 interface ImageModalProps {
-	images: any[];
+	images: Array<{
+		alt?: string;
+		[key: string]: unknown;
+	}>;
 	currentIndex: number;
 	onClose: () => void;
 	onNext: () => void;
@@ -56,40 +60,64 @@ export const ImageModal = ({
 	}, [currentIndex, images]);
 
 	useEffect(() => {
-		const handleKeyPress = (e: KeyboardEvent) => {
+		const handleKeyPress = (e: globalThis.KeyboardEvent) => {
 			if (e.key === "Escape") onClose();
 			if (e.key === "ArrowRight") onNext();
 			if (e.key === "ArrowLeft") onPrevious();
 		};
 
-		document.addEventListener("keydown", handleKeyPress as any);
-		return () => document.removeEventListener("keydown", handleKeyPress as any);
+		document.addEventListener("keydown", handleKeyPress);
+		return () => document.removeEventListener("keydown", handleKeyPress);
 	}, [onClose, onNext, onPrevious]);
 
 	const currentImage = images[currentIndex];
 
 	const handleSwipe = (startX: number, endX: number) => {
-		if (endX - startX > 50) {
-			onPrevious();
-		} else if (startX - endX > 50) {
-			onNext();
+		const deltaX = endX - startX;
+		const minSwipeDistance = 50;
+
+		if (Math.abs(deltaX) > minSwipeDistance) {
+			if (deltaX > 0) {
+				onPrevious();
+			} else {
+				onNext();
+			}
 		}
 	};
 
 	let startX: number;
+	let startY: number;
 
-	const handleTouchStart = (e: TouchEvent) => {
+	const handleTouchStart = (e: TouchEvent<HTMLDialogElement>) => {
 		startX = e.touches[0].clientX;
+		startY = e.touches[0].clientY;
 	};
 
-	const handleTouchMove = (e: TouchEvent) => {
-		const endX = e.touches[0].clientX;
-		handleSwipe(startX, endX);
+	const handleTouchMove = (e: TouchEvent<HTMLDialogElement>) => {
+		const currentX = e.touches[0].clientX;
+		const currentY = e.touches[0].clientY;
+		const deltaX = Math.abs(currentX - startX);
+		const deltaY = Math.abs(currentY - startY);
+
+		if (deltaX > deltaY && deltaX > 10) {
+			e.preventDefault();
+		}
 	};
 
-	const handleMouseDown = (e: MouseEvent) => {
+	const handleTouchEnd = (e: TouchEvent<HTMLDialogElement>) => {
+		const endX = e.changedTouches[0].clientX;
+		const endY = e.changedTouches[0].clientY;
+		const deltaX = Math.abs(endX - startX);
+		const deltaY = Math.abs(endY - startY);
+
+		if (deltaX > deltaY && deltaX > 20) {
+			handleSwipe(startX, endX);
+		}
+	};
+
+	const handleMouseDown = (e: MouseEvent<HTMLDialogElement>) => {
 		startX = e.clientX;
-		const handleMouseMove = (e: MouseEvent) => {
+		const handleMouseMove = (e: globalThis.MouseEvent) => {
 			handleSwipe(startX, e.clientX);
 		};
 		const handleMouseUp = () => {
@@ -107,6 +135,7 @@ export const ImageModal = ({
 			onKeyDown={handleBackdropKeyDown}
 			onTouchStart={handleTouchStart}
 			onTouchMove={handleTouchMove}
+			onTouchEnd={handleTouchEnd}
 			onMouseDown={handleMouseDown}
 			open
 		>
@@ -136,11 +165,7 @@ export const ImageModal = ({
 				‹
 			</button>
 
-			<div
-				className="relative flex h-full w-full items-center justify-center"
-				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => e.key === "Enter" && e.stopPropagation()}
-			>
+			<div className="relative flex h-full w-full items-center justify-center">
 				<img
 					src={getImage(currentImage).url()}
 					alt={currentImage.alt || "Full size preview"}
