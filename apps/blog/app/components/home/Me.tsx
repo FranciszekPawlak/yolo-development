@@ -18,7 +18,7 @@ export default function Me() {
 					#FullStack
 				</p>
 				<p className="mt-2 text-center font-montserrat text-sm text-white duration-500 hover:scale-110 lg:text-lg">
-					#Marketplatz
+					#AI
 				</p>
 			</div>
 		</div>

@@ -1,6 +1,6 @@
 import type { PortableTextReactComponents } from "@portabletext/react";
 import { PortableText } from "@portabletext/react";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { getImage } from "~/api/image";
 import { ImageModal } from "./ImageModal";
 
@@ -8,22 +8,29 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-	const images = blocks.filter((block: any) => block._type === "image");
+	const images = useMemo(
+		() => blocks.filter((block: any) => block._type === "image"),
+		[blocks],
+	);
 
-	const handleImageClick = (index: number) => {
+	const handleImageClick = useCallback((index: number) => {
 		setCurrentImageIndex(index);
 		setModalOpen(true);
-	};
+	}, []);
 
-	const handleNext = () => {
-		setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-	};
+	const handleNext = useCallback(
+		() => setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1)),
+		[images.length],
+	);
 
-	const handlePrevious = () => {
-		setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-	};
+	const handlePrevious = useCallback(
+		() => setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1)),
+		[images.length],
+	);
 
-	const components: Partial<PortableTextReactComponents> = {
+	const handleClose = useCallback(() => setModalOpen(false), []);
+
+	const components: Partial<PortableTextReactComponents> = useMemo(() => ({
 		block: {
 			h1: ({ children }) => (
 				<h1 className="col-span-2 md:col-span-3 mt-4 mb-2 font-gothic text-5xl">
@@ -60,13 +67,11 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 					"{children}"
 				</blockquote>
 			),
-			normal: ({ children }) => {
-				return (
-					<p className="col-span-2 md:col-span-3 my-2 font-montserrat">
-						{children}&nbsp;
-					</p>
-				);
-			},
+			normal: ({ children }) => (
+				<p className="col-span-2 md:col-span-3 my-2 font-montserrat">
+					{children}&nbsp;
+				</p>
+			),
 		},
 		list: {
 			bullet: ({ children }) => (
@@ -81,12 +86,8 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 			),
 		},
 		listItem: {
-			bullet: ({ children }) => (
-				<li className="my-1 font-montserrat">{children}</li>
-			),
-			number: ({ children }) => (
-				<li className="my-1 font-montserrat">{children}</li>
-			),
+			bullet: ({ children }) => <li className="my-1 font-montserrat">{children}</li>,
+			number: ({ children }) => <li className="my-1 font-montserrat">{children}</li>,
 		},
 		types: {
 			image: ({ value }: any) => {
@@ -109,25 +110,19 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 				<a
 					className="font-montserrat underline"
 					href={value.href}
-					rel={"noreferrer noopener"}
+					rel="noreferrer noopener"
 					target="_blank"
 				>
 					{children}
 				</a>
 			),
-			em: ({ children }) => (
-				<em className="font-montserrat italic">{children}</em>
-			),
-			b: ({ children }) => (
-				<b className="font-bold font-montserrat">{children}</b>
-			),
+			em: ({ children }) => <em className="font-montserrat italic">{children}</em>,
+			b: ({ children }) => <b className="font-bold font-montserrat">{children}</b>,
 			code: ({ children }) => (
-				<code className="my-4 block rounded-lg bg-zinc-900 p-4">
-					{children}
-				</code>
+				<code className="my-4 block rounded-lg bg-zinc-900 p-4">{children}</code>
 			),
 		},
-	};
+	}), [images, handleImageClick]);
 
 	return (
 		<>
@@ -138,7 +133,7 @@ export const BlockContent = ({ blocks }: { blocks: any }) => {
 				<ImageModal
 					images={images}
 					currentIndex={currentImageIndex}
-					onClose={() => setModalOpen(false)}
+					onClose={handleClose}
 					onNext={handleNext}
 					onPrevious={handlePrevious}
 				/>

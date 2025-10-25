@@ -6,16 +6,6 @@ export async function getBookSummary(
 	author: string,
 ): Promise<AiResult> {
 	try {
-		const prompt = `Provide information about the book "${title}" by ${author}.
-		Please format the response in the following structure:
-		<p><b>Date:</b> [original publication date]</p>
-		<p><b>Category:</b> [main genre/category]</p>
-		<p><b>Pages:</b> [number of pages]</p>
-		<p><b>Brief Summary:</b> [Give me a short summary of the book in English]</p>
-		<p><b>Criticism:</b> [In one concise sentence, describe the general critical reception and highlight one key strength or weakness of the book.]</p>
-		
-		If you're not certain about any information, respond with "N/A" for that field. Keep the summary concise and spoiler-free.`;
-
 		const response = await fetch("https://api.openai.com/v1/chat/completions", {
 			method: "POST",
 			headers: {
@@ -23,15 +13,20 @@ export async function getBookSummary(
 				Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
 			},
 			body: JSON.stringify({
-				model: "gpt-3.5-turbo",
+				model: "gpt-4o-mini",
 				messages: [
 					{
+						role: "system",
+						content:
+							"You are a cynical, sarcastic book critic with a dark sense of humor. Your reviews are sharp, edgy, and brutally honest. You use irony, dark comedy, and existential observations. Your humor is contemporary - think Gen Z/Millennial sarcasm, not safe corporate jokes. Be clever and cutting, not wholesome.",
+					},
+					{
 						role: "user",
-						content: prompt,
+						content: `Write a darkly funny, sarcastic review of "${title}" by ${author}. Be cynical and sharp - point out the absurdities, ironies, or dark themes. Use contemporary humor with an edge. Imagine you're ranting about this book to your friend at 2 AM after too much coffee. Be brutally honest but entertaining. Keep it spoiler-free. Write 5-10 sentences in natural language as one paragraph.`,
 					},
 				],
-				max_tokens: 250,
-				temperature: 0.7,
+				max_tokens: 300,
+				temperature: 0.95,
 			}),
 		});
 
