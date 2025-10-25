@@ -13,8 +13,8 @@ export default function Overview() {
 	return (
 		<div className="mx-auto max-w-[800px]">
 			<Header title="Photos" />
-			<span className="block text-xs text-center w-full">My texts are not written by AI 😮</span>
-			<div className="mt-8 flex flex-col">
+			<span className="block mt-8 text-xs text-center w-full">My texts are not written by AI 😮</span>
+			<div className="mt-4 flex flex-col">
 				{posts.length > 0 ? (
 					posts.map((article) => (
 						<div

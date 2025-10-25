@@ -1,7 +1,6 @@
-import {
+import React, {
 	type KeyboardEvent,
 	type MouseEvent,
-	type TouchEvent,
 	useEffect,
 	useState,
 } from "react";
@@ -72,58 +71,98 @@ export const ImageModal = ({
 
 	const currentImage = images[currentIndex];
 
-	const handleSwipe = (startX: number, endX: number) => {
-		const deltaX = endX - startX;
-		const minSwipeDistance = 50;
+	const touchStartRef = React.useRef({ x: 0, y: 0 });
+	const isDraggingRef = React.useRef(false);
 
-		if (Math.abs(deltaX) > minSwipeDistance) {
-			if (deltaX > 0) {
-				onPrevious();
-			} else {
-				onNext();
+	useEffect(() => {
+		const dialogElement = document.querySelector("dialog[open]");
+		if (!dialogElement) return;
+
+		const handleTouchStart = (e: Event) => {
+			const touchEvent = e as unknown as globalThis.TouchEvent;
+			touchStartRef.current = {
+				x: touchEvent.touches[0].clientX,
+				y: touchEvent.touches[0].clientY,
+			};
+		};
+
+		const handleTouchMove = (e: Event) => {
+			const touchEvent = e as unknown as globalThis.TouchEvent;
+			const currentX = touchEvent.touches[0].clientX;
+			const currentY = touchEvent.touches[0].clientY;
+			const deltaX = Math.abs(currentX - touchStartRef.current.x);
+			const deltaY = Math.abs(currentY - touchStartRef.current.y);
+
+			if (deltaX > deltaY && deltaX > 10) {
+				e.preventDefault();
 			}
-		}
-	};
+		};
 
-	let startX: number;
-	let startY: number;
+		const handleTouchEnd = (e: Event) => {
+			const touchEvent = e as unknown as globalThis.TouchEvent;
+			const endX = touchEvent.changedTouches[0].clientX;
+			const deltaX = endX - touchStartRef.current.x;
+			const deltaY = Math.abs(
+				touchEvent.changedTouches[0].clientY - touchStartRef.current.y,
+			);
+			const absDeltaX = Math.abs(deltaX);
 
-	const handleTouchStart = (e: TouchEvent<HTMLDialogElement>) => {
-		startX = e.touches[0].clientX;
-		startY = e.touches[0].clientY;
-	};
+			if (absDeltaX > deltaY && absDeltaX > 50) {
+				if (deltaX > 0) {
+					onPrevious();
+				} else {
+					onNext();
+				}
+			}
+		};
 
-	const handleTouchMove = (e: TouchEvent<HTMLDialogElement>) => {
-		const currentX = e.touches[0].clientX;
-		const currentY = e.touches[0].clientY;
-		const deltaX = Math.abs(currentX - startX);
-		const deltaY = Math.abs(currentY - startY);
+		dialogElement.addEventListener("touchstart", handleTouchStart, {
+			passive: false,
+		} as AddEventListenerOptions);
+		dialogElement.addEventListener("touchmove", handleTouchMove, {
+			passive: false,
+		} as AddEventListenerOptions);
+		dialogElement.addEventListener("touchend", handleTouchEnd, {
+			passive: false,
+		} as AddEventListenerOptions);
 
-		if (deltaX > deltaY && deltaX > 10) {
-			e.preventDefault();
-		}
-	};
-
-	const handleTouchEnd = (e: TouchEvent<HTMLDialogElement>) => {
-		const endX = e.changedTouches[0].clientX;
-		const endY = e.changedTouches[0].clientY;
-		const deltaX = Math.abs(endX - startX);
-		const deltaY = Math.abs(endY - startY);
-
-		if (deltaX > deltaY && deltaX > 20) {
-			handleSwipe(startX, endX);
-		}
-	};
+		return () => {
+			dialogElement.removeEventListener("touchstart", handleTouchStart);
+			dialogElement.removeEventListener("touchmove", handleTouchMove);
+			dialogElement.removeEventListener("touchend", handleTouchEnd);
+		};
+	}, [onNext, onPrevious]);
 
 	const handleMouseDown = (e: MouseEvent<HTMLDialogElement>) => {
-		startX = e.clientX;
+		if (e.button !== 0) return;
+
+		const startX = e.clientX;
+		isDraggingRef.current = true;
+
 		const handleMouseMove = (e: globalThis.MouseEvent) => {
-			handleSwipe(startX, e.clientX);
+			const deltaX = Math.abs(e.clientX - startX);
+			if (deltaX > 10) {
+				e.preventDefault();
+			}
 		};
-		const handleMouseUp = () => {
+
+		const handleMouseUp = (e: globalThis.MouseEvent) => {
+			const deltaX = e.clientX - startX;
+			const absDeltaX = Math.abs(deltaX);
+
+			if (absDeltaX > 50) {
+				if (deltaX > 0) {
+					onPrevious();
+				} else {
+					onNext();
+				}
+			}
+
+			isDraggingRef.current = false;
 			document.removeEventListener("mousemove", handleMouseMove);
 			document.removeEventListener("mouseup", handleMouseUp);
 		};
+
 		document.addEventListener("mousemove", handleMouseMove);
 		document.addEventListener("mouseup", handleMouseUp);
 	};
@@ -133,9 +172,6 @@ export const ImageModal = ({
 			className="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-black/85"
 			onClick={handleBackdropClick}
 			onKeyDown={handleBackdropKeyDown}
-			onTouchStart={handleTouchStart}
-			onTouchMove={handleTouchMove}
-			onTouchEnd={handleTouchEnd}
 			onMouseDown={handleMouseDown}
 			open
 		>
