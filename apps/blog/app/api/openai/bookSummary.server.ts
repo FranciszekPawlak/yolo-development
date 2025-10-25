@@ -22,10 +22,10 @@ export async function getBookSummary(
 					},
 					{
 						role: "user",
-						content: `Write a darkly funny, sarcastic review of "${title}" by ${author}. Be cynical and sharp - point out the absurdities, ironies, or dark themes. Use contemporary humor with an edge. Imagine you're ranting about this book to your friend at 2 AM after too much coffee. Be brutally honest but entertaining. Keep it spoiler-free. Write 5-10 sentences in natural language as one paragraph.`,
+						content: `Write a darkly funny, sarcastic review of "${title}" by ${author}. Be cynical and sharp - point out the absurdities, ironies, or dark themes. Use contemporary humor with an edge. Imagine you're ranting about this book to your friend at 2 AM after too much coffee. Be brutally honest but entertaining. Keep it spoiler-free. Write EXACTLY 5 sentences maximum - be concise and punchy. One paragraph only.`,
 					},
 				],
-				max_tokens: 300,
+				max_tokens: 200,
 				temperature: 0.95,
 			}),
 		});
