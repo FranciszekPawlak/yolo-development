@@ -3,6 +3,7 @@ import type { LoaderFunctionArgs } from "@vercel/remix";
 import { getArticle } from "~/api/articles/articles";
 import { Avatar } from "~/ui/Avatar";
 import { BlockContent } from "~/ui/BlockContent";
+import { calculateReadingTime, formatReadingTime } from "~/lib/readingTime";
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	if (!params.slug) {
@@ -17,6 +18,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function Article() {
 	const article = useLoaderData<typeof loader>();
+	const readingTime = calculateReadingTime(article.content);
 
 	return (
 		<div className="mx-auto max-w-[800px]">
@@ -43,6 +45,9 @@ export default function Article() {
 									updated at {new Date(article._updatedAt).toLocaleDateString()}
 								</span>
 							)}
+							<span className="italic">
+								{formatReadingTime(readingTime)}
+							</span>
 						</span>
 					</div>
 					<div>
