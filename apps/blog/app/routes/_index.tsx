@@ -2,6 +2,7 @@ import type { MetaFunction } from "@vercel/remix";
 import { Slogan } from "~/components/home/Slogan";
 import Links from "../components/home/Links";
 import Me from "../components/home/Me";
+import Creator from "../components/home/Creator";
 
 
 export const meta: MetaFunction = () => {
@@ -15,6 +16,7 @@ export default function Index() {
 	return (
 		<div>
 			<Me />
+			<Creator />
 			<Slogan />
 			<Links />
 		</div>
