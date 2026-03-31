@@ -27,7 +27,7 @@
 		"react-infinite-scroll-component": "^6.1.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.3",
+		"@biomejs/biome": "2.2.0",
 		"@remix-run/dev": "2.10.0",
 		"@remix-run/eslint-config": "2.10.0",
 		"@types/react": "^18.2.20",
