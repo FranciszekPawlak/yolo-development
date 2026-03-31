@@ -35,12 +35,7 @@ export function GenerateButton({ files, onComplete }: GenerateButtonProps) {
 
 	return (
 		<div className="space-y-3">
-			<Button
-				fullWidth
-				size="lg"
-				isPending={loading}
-				onPress={handleGenerate}
-			>
+			<Button fullWidth size="lg" isPending={loading} onPress={handleGenerate}>
 				{({ isPending }) => (
 					<>
 						{isPending ? <Spinner color="current" size="sm" /> : null}

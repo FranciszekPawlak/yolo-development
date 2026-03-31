@@ -49,13 +49,17 @@ export default function UploadPage() {
 						{result.skippedFiles > 0 && (
 							<>
 								Pominięto <strong>{result.skippedFiles}</strong>{" "}
-								{result.skippedFiles === 1 ? "duplikat pliku" : "duplikatów plików"}.{" "}
+								{result.skippedFiles === 1
+									? "duplikat pliku"
+									: "duplikatów plików"}
+								.{" "}
 							</>
 						)}
 						Łącznie <strong>{result.total}</strong> transakcji
 						{result.duplicatesSkipped > 0 && (
 							<>
-								{" "}(pominięto <strong>{result.duplicatesSkipped}</strong>{" "}
+								{" "}
+								(pominięto <strong>{result.duplicatesSkipped}</strong>{" "}
 								zduplikowanych transakcji między plikami)
 							</>
 						)}
@@ -81,7 +85,11 @@ export default function UploadPage() {
 						Pliki na Drive
 					</h2>
 					<p className="mt-0.5 text-xs text-zinc-400 sm:text-sm">
-						Pliki w katalogu <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-zinc-300">Wydatki/raw</code> na Google Drive.
+						Pliki w katalogu{" "}
+						<code className="rounded bg-zinc-800 px-1.5 py-0.5 text-zinc-300">
+							Wydatki/raw
+						</code>{" "}
+						na Google Drive.
 					</p>
 				</div>
 

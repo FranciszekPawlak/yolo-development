@@ -37,7 +37,8 @@ function formatMonthLabel(key: string): string {
 
 function detectBankFromName(name: string): string {
 	const lower = name.toLowerCase();
-	if (lower.includes("consolidated-statement") || lower.includes("revolut")) return "Revolut";
+	if (lower.includes("consolidated-statement") || lower.includes("revolut"))
+		return "Revolut";
 	if (lower.includes("lista_transakcji") || lower.includes("ing")) return "ING";
 	return "—";
 }
@@ -80,7 +81,10 @@ export function DriveFilesTable() {
 	}, [files, selectedMonth]);
 
 	const totalPages = Math.max(1, Math.ceil(filteredFiles.length / PAGE_SIZE));
-	const pagedFiles = filteredFiles.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+	const pagedFiles = filteredFiles.slice(
+		page * PAGE_SIZE,
+		(page + 1) * PAGE_SIZE,
+	);
 
 	useEffect(() => {
 		setPage(0);
@@ -126,7 +130,9 @@ export function DriveFilesTable() {
 					Wszystkie ({files.length})
 				</button>
 				{months.map((m) => {
-					const count = files.filter((f) => getMonthKey(f.createdTime) === m).length;
+					const count = files.filter(
+						(f) => getMonthKey(f.createdTime) === m,
+					).length;
 					return (
 						<button
 							type="button"
@@ -150,26 +156,41 @@ export function DriveFilesTable() {
 					<thead>
 						<tr className="border-b border-zinc-800 text-zinc-500">
 							<th className="px-3 py-2.5 font-medium sm:px-4">Plik</th>
-							<th className="hidden px-3 py-2.5 font-medium sm:table-cell sm:px-4">Bank</th>
-							<th className="hidden px-3 py-2.5 font-medium sm:table-cell sm:px-4">Rozmiar</th>
+							<th className="hidden px-3 py-2.5 font-medium sm:table-cell sm:px-4">
+								Bank
+							</th>
+							<th className="hidden px-3 py-2.5 font-medium sm:table-cell sm:px-4">
+								Rozmiar
+							</th>
 							<th className="px-3 py-2.5 font-medium sm:px-4">Data dodania</th>
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-zinc-800/60">
 						{pagedFiles.map((file) => (
-							<tr key={file.id} className="text-zinc-300 transition hover:bg-zinc-800/30">
+							<tr
+								key={file.id}
+								className="text-zinc-300 transition hover:bg-zinc-800/30"
+							>
 								<td className="px-3 py-2.5 sm:px-4">
 									<div className="flex items-center gap-2">
-										<Chip size="sm" className="hidden shrink-0 text-[10px] uppercase sm:inline-flex">
+										<Chip
+											size="sm"
+											className="hidden shrink-0 text-[10px] uppercase sm:inline-flex"
+										>
 											{file.name.split(".").pop()}
 										</Chip>
-										<span className="truncate max-w-[180px] sm:max-w-xs" title={file.name}>
+										<span
+											className="truncate max-w-[180px] sm:max-w-xs"
+											title={file.name}
+										>
 											{file.name}
 										</span>
 									</div>
 								</td>
 								<td className="hidden px-3 py-2.5 sm:table-cell sm:px-4">
-									<span className="text-zinc-400">{detectBankFromName(file.name)}</span>
+									<span className="text-zinc-400">
+										{detectBankFromName(file.name)}
+									</span>
 								</td>
 								<td className="hidden px-3 py-2.5 text-zinc-400 sm:table-cell sm:px-4">
 									{formatBytes(file.size)}
@@ -187,7 +208,8 @@ export function DriveFilesTable() {
 			{totalPages > 1 && (
 				<div className="flex items-center justify-between px-1">
 					<span className="text-[11px] text-zinc-500">
-						{page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, filteredFiles.length)} z{" "}
+						{page * PAGE_SIZE + 1}–
+						{Math.min((page + 1) * PAGE_SIZE, filteredFiles.length)} z{" "}
 						{filteredFiles.length}
 					</span>
 					<div className="flex gap-1">

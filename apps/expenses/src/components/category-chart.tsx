@@ -11,20 +11,6 @@ import {
 } from "recharts";
 import type { CategoryBreakdown } from "@/lib/dashboard-utils";
 
-const COLORS = [
-	"#3b82f6",
-	"#ef4444",
-	"#f59e0b",
-	"#10b981",
-	"#8b5cf6",
-	"#ec4899",
-	"#06b6d4",
-	"#f97316",
-	"#14b8a6",
-	"#a855f7",
-	"#6366f1",
-];
-
 const fmt = (n: number) =>
 	new Intl.NumberFormat("pl-PL", {
 		minimumFractionDigits: 0,
@@ -40,8 +26,27 @@ export function CategoryChart({ data }: CategoryChartProps) {
 	const restAmount = data.slice(10).reduce((sum, d) => sum + d.amount, 0);
 	const chartData =
 		restAmount > 0
-			? [...top, { category: "other", label: "Pozostałe", amount: restAmount }]
+			? [
+					...top,
+					{
+						category: "other",
+						label: "Pozostałe",
+						amount: restAmount,
+						color: "#525252",
+						perspective: "neutral" as const,
+					},
+				]
 			: top;
+
+	if (chartData.length === 0) {
+		return (
+			<Card className="flex min-h-[300px] items-center justify-center border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5">
+				<p className="text-sm text-zinc-500">
+					Brak danych dla wybranych filtrów
+				</p>
+			</Card>
+		);
+	}
 
 	return (
 		<Card className="border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5">
@@ -60,11 +65,8 @@ export function CategoryChart({ data }: CategoryChartProps) {
 						dataKey="amount"
 						nameKey="label"
 					>
-						{chartData.map((_, index) => (
-							<Cell
-								key={`cell-${index}`}
-								fill={COLORS[index % COLORS.length]}
-							/>
+						{chartData.map((entry) => (
+							<Cell key={entry.category} fill={entry.color} />
 						))}
 					</Pie>
 					<Tooltip

@@ -99,7 +99,9 @@ export interface DriveFileInfo {
 }
 
 /** List all files in the raw/ subfolder, sorted by creation date descending. */
-export async function listRawFiles(accessToken: string): Promise<DriveFileInfo[]> {
+export async function listRawFiles(
+	accessToken: string,
+): Promise<DriveFileInfo[]> {
 	const { drive, rawId } = await ensureFolders(accessToken);
 
 	const allFiles: DriveFileInfo[] = [];
@@ -131,7 +133,10 @@ export async function listRawFiles(accessToken: string): Promise<DriveFileInfo[]
 }
 
 /** Download a file's content from Drive as a Buffer. */
-export async function downloadFile(accessToken: string, fileId: string): Promise<{ name: string; buffer: Buffer }> {
+export async function downloadFile(
+	accessToken: string,
+	fileId: string,
+): Promise<{ name: string; buffer: Buffer }> {
 	const drive = getDriveClient(accessToken);
 
 	const meta = await drive.files.get({ fileId, fields: "name" });

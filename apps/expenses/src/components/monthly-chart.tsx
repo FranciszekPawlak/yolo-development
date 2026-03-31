@@ -11,6 +11,7 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
+import type { Perspective } from "@/lib/categorize";
 import type { MonthlyData } from "@/lib/dashboard-utils";
 
 const fmt = (n: number) =>
@@ -26,13 +27,39 @@ const fmtShort = (n: number) => {
 
 interface MonthlyChartProps {
 	data: MonthlyData[];
+	perspective: Perspective | "all";
 }
 
-export function MonthlyChart({ data }: MonthlyChartProps) {
+const LABEL_MAP: Record<string, string> = {
+	income: "Przychody",
+	expenses: "Wydatki",
+	businessCosts: "Koszty firmy",
+	personalExpenses: "Wydatki prywatne",
+	taxes: "Podatki + ZUS",
+};
+
+export function MonthlyChart({ data, perspective }: MonthlyChartProps) {
+	const bars =
+		perspective === "business"
+			? [
+					{ key: "income", fill: "#10b981" },
+					{ key: "businessCosts", fill: "#8b5cf6" },
+					{ key: "taxes", fill: "#ef4444" },
+				]
+			: perspective === "personal"
+				? [
+						{ key: "income", fill: "#10b981" },
+						{ key: "personalExpenses", fill: "#f59e0b" },
+					]
+				: [
+						{ key: "income", fill: "#10b981" },
+						{ key: "expenses", fill: "#ef4444" },
+					];
+
 	return (
 		<Card className="border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5">
 			<h3 className="mb-3 text-xs font-semibold text-zinc-200 sm:mb-4 sm:text-sm">
-				Przychody vs wydatki
+				Przychody vs wydatki (rok)
 			</h3>
 			<ResponsiveContainer width="100%" height={280} className="sm:!h-[350px]">
 				<BarChart
@@ -41,9 +68,8 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
 				>
 					<CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
 					<XAxis
-						dataKey="month"
+						dataKey="monthLabel"
 						tick={{ fill: "#71717a", fontSize: 10 }}
-						tickFormatter={(v: string) => v.slice(5)}
 					/>
 					<YAxis
 						tick={{ fill: "#71717a", fontSize: 9 }}
@@ -53,7 +79,7 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
 					<Tooltip
 						formatter={(value, name) => [
 							`${fmt(Number(value))} PLN`,
-							name === "income" ? "Przychody" : "Wydatki",
+							LABEL_MAP[name as string] ?? name,
 						]}
 						contentStyle={{
 							backgroundColor: "#18181b",
@@ -63,14 +89,18 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
 						}}
 					/>
 					<Legend
-						formatter={(v: string) =>
-							v === "income" ? "Przychody" : "Wydatki"
-						}
+						formatter={(v: string) => LABEL_MAP[v] ?? v}
 						wrapperStyle={{ fontSize: "10px" }}
 						iconSize={8}
 					/>
-					<Bar dataKey="income" fill="#10b981" radius={[3, 3, 0, 0]} />
-					<Bar dataKey="expenses" fill="#ef4444" radius={[3, 3, 0, 0]} />
+					{bars.map((b) => (
+						<Bar
+							key={b.key}
+							dataKey={b.key}
+							fill={b.fill}
+							radius={[3, 3, 0, 0]}
+						/>
+					))}
 				</BarChart>
 			</ResponsiveContainer>
 		</Card>

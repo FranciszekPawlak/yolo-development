@@ -5,6 +5,7 @@ import {
 	Bar,
 	BarChart,
 	CartesianGrid,
+	Cell,
 	ResponsiveContainer,
 	Tooltip,
 	XAxis,
@@ -33,10 +34,18 @@ export function TopCounterpartiesChart({ data }: TopCounterpartiesChartProps) {
 		name: d.name.length > 18 ? `${d.name.slice(0, 18)}…` : d.name,
 	}));
 
+	if (data.length === 0) {
+		return (
+			<Card className="flex min-h-[300px] items-center justify-center border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5">
+				<p className="text-sm text-zinc-500">Brak danych</p>
+			</Card>
+		);
+	}
+
 	return (
 		<Card className="border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5">
 			<h3 className="mb-3 text-xs font-semibold text-zinc-200 sm:mb-4 sm:text-sm">
-				Top 10 kontrahentów
+				Top kontrahenci
 			</h3>
 			<ResponsiveContainer width="100%" height={300} className="sm:!h-[350px]">
 				<BarChart
@@ -53,7 +62,7 @@ export function TopCounterpartiesChart({ data }: TopCounterpartiesChartProps) {
 					<YAxis
 						type="category"
 						dataKey="name"
-						width={100}
+						width={110}
 						tick={{ fill: "#71717a", fontSize: 9 }}
 					/>
 					<Tooltip
@@ -65,7 +74,11 @@ export function TopCounterpartiesChart({ data }: TopCounterpartiesChartProps) {
 							fontSize: "11px",
 						}}
 					/>
-					<Bar dataKey="amount" fill="#6366f1" radius={[0, 4, 4, 0]} />
+					<Bar dataKey="amount" radius={[0, 4, 4, 0]}>
+						{mobileData.map((entry) => (
+							<Cell key={entry.name} fill={entry.color} />
+						))}
+					</Bar>
 				</BarChart>
 			</ResponsiveContainer>
 		</Card>

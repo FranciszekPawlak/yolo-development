@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CategoryChart } from "@/components/category-chart";
-import { DashboardFilters, type Filters } from "@/components/dashboard-filters";
+import { DashboardFilterBar } from "@/components/dashboard-filters";
 import { FixedCostsTable } from "@/components/fixed-costs-table";
 import { MonthlyChart } from "@/components/monthly-chart";
 import { SummaryCards } from "@/components/summary-cards";
@@ -14,8 +14,10 @@ import {
 	computeMonthlyData,
 	computeSummary,
 	computeTopCounterparties,
+	type DashboardFilters,
 	filterTransactions,
-	getUniqueValues,
+	getAvailableYears,
+	getCurrentYearMonth,
 } from "@/lib/dashboard-utils";
 import type { Transaction } from "@/lib/parsers/types";
 
@@ -24,21 +26,24 @@ interface DashboardClientProps {
 }
 
 export function DashboardClient({ transactions }: DashboardClientProps) {
-	const [filters, setFilters] = useState<Filters>({
-		dateFrom: "",
-		dateTo: "",
+	const { year: currentYear, month: currentMonth } = getCurrentYearMonth();
+	const availableYears = useMemo(
+		() => getAvailableYears(transactions),
+		[transactions],
+	);
+
+	const initialYear = availableYears.includes(currentYear)
+		? currentYear
+		: (availableYears[availableYears.length - 1] ?? currentYear);
+
+	const [filters, setFilters] = useState<DashboardFilters>({
+		year: initialYear,
+		month: initialYear === currentYear ? currentMonth : null,
+		perspective: "all",
+		selectedCategories: [],
 		currency: "",
 		account: "",
 	});
-
-	const currencies = useMemo(
-		() => getUniqueValues(transactions, "currency"),
-		[transactions],
-	);
-	const accounts = useMemo(
-		() => getUniqueValues(transactions, "account"),
-		[transactions],
-	);
 
 	const filtered = useMemo(
 		() => filterTransactions(transactions, filters),
@@ -50,33 +55,54 @@ export function DashboardClient({ transactions }: DashboardClientProps) {
 		() => computeCategoryBreakdown(filtered),
 		[filtered],
 	);
-	const monthlyData = useMemo(() => computeMonthlyData(filtered), [filtered]);
+
+	const yearTransactions = useMemo(
+		() =>
+			filterTransactions(transactions, {
+				...filters,
+				month: null,
+				selectedCategories: [],
+			}),
+		[transactions, filters],
+	);
+	const monthlyData = useMemo(
+		() => computeMonthlyData(yearTransactions),
+		[yearTransactions],
+	);
+
 	const topCounterparties = useMemo(
 		() => computeTopCounterparties(filtered),
 		[filtered],
 	);
 	const fixedCosts = useMemo(() => computeFixedCosts(filtered), [filtered]);
 
+	const isYearView = filters.month === null;
+
 	return (
 		<div className="space-y-4 sm:space-y-6">
-			<DashboardFilters
+			<DashboardFilterBar
 				filters={filters}
 				onChange={setFilters}
-				currencies={currencies}
-				accounts={accounts}
+				transactions={transactions}
 			/>
 
-			<SummaryCards data={summary} />
+			<SummaryCards data={summary} perspective={filters.perspective} />
 
 			<div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
 				<CategoryChart data={categoryData} />
-				<MonthlyChart data={monthlyData} />
+				{isYearView ? (
+					<MonthlyChart data={monthlyData} perspective={filters.perspective} />
+				) : (
+					<TopCounterpartiesChart data={topCounterparties} />
+				)}
 			</div>
 
-			<div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-				<TrendChart data={monthlyData} />
-				<TopCounterpartiesChart data={topCounterparties} />
-			</div>
+			{isYearView && (
+				<div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+					<TrendChart data={monthlyData} perspective={filters.perspective} />
+					<TopCounterpartiesChart data={topCounterparties} />
+				</div>
+			)}
 
 			<FixedCostsTable data={fixedCosts} />
 		</div>
