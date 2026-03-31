@@ -1,16 +1,13 @@
 export type Category =
 	| "internal_transfer"
-	// Business categories
+	// Business categories (strict: only ZUS, Santander, Google Workspace, Mentzen, OVH, Mikrus, hitme)
 	| "biz_income"
 	| "biz_tax"
 	| "biz_zus"
 	| "biz_leasing"
 	| "biz_accounting"
 	| "biz_cloud"
-	| "biz_insurance"
-	| "biz_other"
 	// Personal categories
-	| "salary"
 	| "subscriptions"
 	| "transport"
 	| "food_delivery"
@@ -28,12 +25,13 @@ export type Category =
 	| "cash_withdrawal"
 	| "cash_deposit"
 	| "interest"
-	| "revolut_topup"
 	| "family"
 	| "gifts"
 	| "education"
 	| "travel"
 	| "fuel"
+	| "insurance"
+	| "car"
 	| "uncategorized";
 
 export type Perspective = "business" | "personal" | "neutral";
@@ -47,10 +45,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 	biz_leasing: "Leasing",
 	biz_accounting: "Księgowość",
 	biz_cloud: "IT / Cloud",
-	biz_insurance: "Ubezpieczenia firmowe",
-	biz_other: "Inne firmowe",
 	// Personal
-	salary: "Wynagrodzenie",
 	subscriptions: "Subskrypcje",
 	transport: "Transport",
 	food_delivery: "Jedzenie (delivery)",
@@ -68,26 +63,26 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 	cash_withdrawal: "Wypłata gotówki",
 	cash_deposit: "Wpłata gotówki",
 	interest: "Odsetki bankowe",
-	revolut_topup: "Doładowanie Revolut",
 	family: "Rodzina",
 	gifts: "Prezenty",
 	education: "Edukacja",
 	travel: "Podróże",
 	fuel: "Paliwo",
+	insurance: "Ubezpieczenia",
+	car: "Samochód",
 	uncategorized: "Bez kategorii",
 };
 
 export const CATEGORY_PERSPECTIVE: Record<Category, Perspective> = {
 	internal_transfer: "neutral",
+	// Business - strict list
 	biz_income: "business",
 	biz_tax: "business",
 	biz_zus: "business",
 	biz_leasing: "business",
 	biz_accounting: "business",
 	biz_cloud: "business",
-	biz_insurance: "business",
-	biz_other: "business",
-	salary: "personal",
+	// Personal
 	subscriptions: "personal",
 	transport: "personal",
 	food_delivery: "personal",
@@ -105,12 +100,13 @@ export const CATEGORY_PERSPECTIVE: Record<Category, Perspective> = {
 	cash_withdrawal: "neutral",
 	cash_deposit: "neutral",
 	interest: "neutral",
-	revolut_topup: "neutral",
 	family: "personal",
 	gifts: "personal",
 	education: "personal",
 	travel: "personal",
 	fuel: "personal",
+	insurance: "personal",
+	car: "personal",
 	uncategorized: "neutral",
 };
 
@@ -122,9 +118,6 @@ export const CATEGORY_COLORS: Record<Category, string> = {
 	biz_leasing: "#8b5cf6",
 	biz_accounting: "#a855f7",
 	biz_cloud: "#06b6d4",
-	biz_insurance: "#64748b",
-	biz_other: "#94a3b8",
-	salary: "#10b981",
 	subscriptions: "#ec4899",
 	transport: "#3b82f6",
 	food_delivery: "#f59e0b",
@@ -142,12 +135,13 @@ export const CATEGORY_COLORS: Record<Category, string> = {
 	cash_withdrawal: "#9ca3af",
 	cash_deposit: "#4ade80",
 	interest: "#fbbf24",
-	revolut_topup: "#818cf8",
 	family: "#fb7185",
 	gifts: "#c084fc",
 	education: "#2dd4bf",
 	travel: "#38bdf8",
 	fuel: "#a3a3a3",
+	insurance: "#64748b",
+	car: "#94a3b8",
 	uncategorized: "#525252",
 };
 
@@ -158,10 +152,10 @@ export const FIXED_COST_CATEGORIES: Category[] = [
 	"biz_accounting",
 	"biz_zus",
 	"biz_cloud",
-	"biz_insurance",
 	"rent",
 	"sport",
 	"donations",
+	"insurance",
 ];
 
 export const BUSINESS_CATEGORIES: Category[] = [
@@ -171,12 +165,9 @@ export const BUSINESS_CATEGORIES: Category[] = [
 	"biz_leasing",
 	"biz_accounting",
 	"biz_cloud",
-	"biz_insurance",
-	"biz_other",
 ];
 
 export const PERSONAL_CATEGORIES: Category[] = [
-	"salary",
 	"subscriptions",
 	"transport",
 	"food_delivery",
@@ -195,19 +186,24 @@ export const PERSONAL_CATEGORIES: Category[] = [
 	"education",
 	"travel",
 	"fuel",
+	"insurance",
+	"car",
 ];
 
 const RULES: Array<{ pattern: RegExp; category: Category }> = [
-	// ──────── Internal transfers ────────
+	// ──────── Internal transfers (hidden from all charts) ────────
 	{ pattern: /przelew\s+w[lł]asny/i, category: "internal_transfer" },
 	{
 		pattern: /przelew\s+(?:mi[eę]dzy|wewn[eę]trzny)/i,
 		category: "internal_transfer",
 	},
+	{ pattern: /revolut\*\*\d+/i, category: "internal_transfer" },
+	{ pattern: /revolut/i, category: "internal_transfer" },
+	{ pattern: /depositing\s*savings/i, category: "internal_transfer" },
+	{ pattern: /withdrawing\s*savings/i, category: "internal_transfer" },
 
-	// ──────── Business Income ────────
+	// ──────── Business Income (ONLY eRecruitment invoices) ────────
 	{ pattern: /erecruitment/i, category: "biz_income" },
-	{ pattern: /FS\d+\/\d+\/\d+/i, category: "biz_income" },
 
 	// ──────── Business Tax ────────
 	{
@@ -217,6 +213,7 @@ const RULES: Array<{ pattern: RegExp; category: Category }> = [
 	{ pattern: /\/TI\/N\d+\/OKR\//i, category: "biz_tax" },
 	{ pattern: /PIT-5|VAT-?7|PIT-?36|CIT/i, category: "biz_tax" },
 	{ pattern: /podatek.*dochodow|podatek.*vat/i, category: "biz_tax" },
+	{ pattern: /OBC\.PODATEK\s*OD\s*ODSET/i, category: "biz_tax" },
 
 	// ──────── Business ZUS ────────
 	{ pattern: /\bZUS\b/i, category: "biz_zus" },
@@ -227,38 +224,24 @@ const RULES: Array<{ pattern: RegExp; category: Category }> = [
 		category: "biz_zus",
 	},
 
-	// ──────── Business Leasing ────────
+	// ──────── Business Leasing (Santander/Multirent) ────────
 	{ pattern: /multirent|santander\s*consumer/i, category: "biz_leasing" },
 	{ pattern: /leasing/i, category: "biz_leasing" },
 	{ pattern: /105141\/2025/i, category: "biz_leasing" },
 
-	// ──────── Business Accounting ────────
+	// ──────── Business Accounting (Mentzen) ────────
 	{ pattern: /mentzen/i, category: "biz_accounting" },
 	{ pattern: /ksi[eę]gow|rachunkow|accounting/i, category: "biz_accounting" },
 
-	// ──────── Business Cloud / IT ────────
+	// ──────── Business Cloud / IT (Google Workspace, OVH, Mikrus, hitme) ────────
 	{ pattern: /google\s*(workspace|gsuite|cloud)/i, category: "biz_cloud" },
 	{ pattern: /GSUITE_/i, category: "biz_cloud" },
 	{ pattern: /ovhcloud|ovh\s/i, category: "biz_cloud" },
-	{ pattern: /github/i, category: "biz_cloud" },
+	{ pattern: /mikrus/i, category: "biz_cloud" },
+	{ pattern: /hitme/i, category: "biz_cloud" },
 	{ pattern: /mrugalski\.pl/i, category: "biz_cloud" },
 
-	// ──────── Business Insurance ────────
-	{ pattern: /generali.*polis/i, category: "biz_insurance" },
-	{ pattern: /ubezpiecz.*firmow/i, category: "biz_insurance" },
-
-	// ──────── Business Other ────────
-	{ pattern: /wagas/i, category: "biz_other" },
-	{ pattern: /oponeo/i, category: "biz_other" },
-	{ pattern: /\/NIP\//i, category: "biz_other" },
-
-	// ──────── Personal Income / Salary ────────
-	{
-		pattern: /wynagrodzeni|pensj|salary|wyp[lł]ata\s+wynag/i,
-		category: "salary",
-	},
-
-	// ──────── Subscriptions ────────
+	// ──────── Subscriptions (personal) ────────
 	{ pattern: /spotify/i, category: "subscriptions" },
 	{ pattern: /netflix/i, category: "subscriptions" },
 	{ pattern: /google\s*one/i, category: "subscriptions" },
@@ -269,6 +252,7 @@ const RULES: Array<{ pattern: RegExp; category: Category }> = [
 	{ pattern: /amazon\s*prime/i, category: "subscriptions" },
 	{ pattern: /audible/i, category: "subscriptions" },
 	{ pattern: /chatgpt|openai/i, category: "subscriptions" },
+	{ pattern: /github/i, category: "subscriptions" },
 	{ pattern: /notion/i, category: "subscriptions" },
 	{ pattern: /icloud/i, category: "subscriptions" },
 	{ pattern: /mobile.traffic.data/i, category: "subscriptions" },
@@ -353,17 +337,21 @@ const RULES: Array<{ pattern: RegExp; category: Category }> = [
 	{ pattern: /gym|si[lł]ownia|fitness|fitssey|moovly/i, category: "sport" },
 	{ pattern: /multisport/i, category: "sport" },
 
-	// ──────── Donations / Charity ────────
+	// ──────── Donations / Charity (personal) ────────
 	{ pattern: /unicef/i, category: "donations" },
 	{ pattern: /fundacj|darowizn|charit/i, category: "donations" },
 	{ pattern: /siepomaga/i, category: "donations" },
 	{ pattern: /pajacyk/i, category: "donations" },
+	{ pattern: /stowarzyszeni/i, category: "donations" },
 
 	// ──────── Investments ────────
-	{ pattern: /tavex/i, category: "investments" },
 	{ pattern: /z[lł]oto|gold\s/i, category: "investments" },
 	{ pattern: /IKZE/i, category: "investments" },
-	{ pattern: /depositing\s*savings/i, category: "investments" },
+
+	// ──────── Car (personal) ────────
+	{ pattern: /oponeo/i, category: "car" },
+	{ pattern: /wagas/i, category: "car" },
+	{ pattern: /myjnia|car\s*wash/i, category: "car" },
 
 	// ──────── Fuel ────────
 	{ pattern: /orlen|shell\s|bp\s*stacja|lotos|circle\s*k/i, category: "fuel" },
@@ -377,8 +365,10 @@ const RULES: Array<{ pattern: RegExp; category: Category }> = [
 	{ pattern: /biuro\s*obsl.*strefy/i, category: "parking" },
 	{ pattern: /automat\s*\d/i, category: "parking" },
 
-	// ──────── Tax (personal, e.g. interest tax deducted by bank) ────────
-	{ pattern: /OBC\.PODATEK\s*OD\s*ODSET/i, category: "biz_tax" },
+	// ──────── Insurance (personal) ────────
+	{ pattern: /generali/i, category: "insurance" },
+	{ pattern: /ubezpiecz/i, category: "insurance" },
+	{ pattern: /polis[ay]/i, category: "insurance" },
 
 	// ──────── Rent / Housing ────────
 	{ pattern: /czynsz|wspólnota|administracj/i, category: "rent" },
@@ -403,6 +393,7 @@ const RULES: Array<{ pattern: RegExp; category: Category }> = [
 		pattern: /booking\.com|airbnb|hotel|hostel|ryanair|wizzair|lot\s*polish/i,
 		category: "travel",
 	},
+	{ pattern: /tavex/i, category: "travel" },
 
 	// ──────── Education ────────
 	{ pattern: /kurs|szkoleni|udemy|coursera/i, category: "education" },
@@ -420,13 +411,10 @@ const RULES: Array<{ pattern: RegExp; category: Category }> = [
 		category: "interest",
 	},
 
-	// ──────── Revolut top-up ────────
-	{ pattern: /revolut/i, category: "revolut_topup" },
-
 	// ──────── Cashback ────────
 	{ pattern: /cashback/i, category: "shopping" },
 
-	// ──────── Family ────────
+	// ──────── Family (personal) ────────
 	{ pattern: /arkadiusz\s*pawlak/i, category: "family" },
 	{ pattern: /miko[lł]aj\s*pawlak/i, category: "family" },
 	{ pattern: /trzeciak\s*paulina|paulina.*trzeciak/i, category: "family" },

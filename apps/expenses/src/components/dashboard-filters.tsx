@@ -1,12 +1,7 @@
 "use client";
 
-import { Button, Card } from "@heroui/react";
-import {
-	CATEGORY_COLORS,
-	CATEGORY_LABELS,
-	type Category,
-	type Perspective,
-} from "@/lib/categorize";
+import { Button } from "@heroui/react";
+import { CATEGORY_COLORS, type Category } from "@/lib/categorize";
 import type { DashboardFilters } from "@/lib/dashboard-utils";
 import {
 	getActiveCategories,

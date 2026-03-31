@@ -30,7 +30,7 @@ interface CardConfig {
 const ALL_CARDS: CardConfig[] = [
 	{
 		key: "income",
-		label: "Przychody",
+		label: "Przychód (faktury)",
 		getValue: (d) => d.totalIncome,
 		color: "text-emerald-400",
 		border: "border-emerald-500/20",
@@ -62,7 +62,7 @@ const ALL_CARDS: CardConfig[] = [
 const BUSINESS_CARDS: CardConfig[] = [
 	{
 		key: "biz_income",
-		label: "Przychody",
+		label: "Przychód (faktury)",
 		getValue: (d) => d.totalIncome,
 		color: "text-emerald-400",
 		border: "border-emerald-500/20",

@@ -145,8 +145,9 @@ export interface SummaryData {
 
 export function computeSummary(txs: Transaction[]): SummaryData {
 	const ext = externalOnly(txs);
+	// Only eRecruitment invoices count as real income
 	const totalIncome = ext
-		.filter((t) => t.amount > 0)
+		.filter((t) => t.amount > 0 && t.category === "biz_income")
 		.reduce((sum, t) => sum + t.amount, 0);
 	const totalExpenses = ext
 		.filter((t) => t.amount < 0)
@@ -261,9 +262,9 @@ export function computeMonthlyData(txs: Transaction[]): MonthlyData[] {
 		};
 		const perspective = CATEGORY_PERSPECTIVE[t.category as Category];
 
-		if (t.amount > 0) {
+		if (t.amount > 0 && t.category === "biz_income") {
 			entry.income += t.amount;
-		} else {
+		} else if (t.amount < 0) {
 			const abs = Math.abs(t.amount);
 			entry.expenses += abs;
 			if (perspective === "business") entry.businessCosts += abs;
@@ -377,9 +378,7 @@ export function getUniqueValues(
 }
 
 /** Get categories present in the current transaction set */
-export function getActiveCategories(
-	txs: Transaction[],
-): {
+export function getActiveCategories(txs: Transaction[]): {
 	category: Category;
 	label: string;
 	perspective: Perspective;

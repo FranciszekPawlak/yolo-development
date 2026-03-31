@@ -9,6 +9,7 @@ import {
 	ResponsiveContainer,
 	Tooltip,
 } from "recharts";
+import type { Category } from "@/lib/categorize";
 import type { CategoryBreakdown } from "@/lib/dashboard-utils";
 
 const fmt = (n: number) =>
@@ -19,9 +20,15 @@ const fmt = (n: number) =>
 
 interface CategoryChartProps {
 	data: CategoryBreakdown[];
+	activeCategory?: string | null;
+	onCategoryClick?: (category: Category) => void;
 }
 
-export function CategoryChart({ data }: CategoryChartProps) {
+export function CategoryChart({
+	data,
+	activeCategory,
+	onCategoryClick,
+}: CategoryChartProps) {
 	const top = data.slice(0, 10);
 	const restAmount = data.slice(10).reduce((sum, d) => sum + d.amount, 0);
 	const chartData =
@@ -52,6 +59,11 @@ export function CategoryChart({ data }: CategoryChartProps) {
 		<Card className="border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5">
 			<h3 className="mb-3 text-xs font-semibold text-zinc-200 sm:mb-4 sm:text-sm">
 				Wydatki wg kategorii
+				{onCategoryClick && (
+					<span className="ml-2 font-normal text-zinc-500">
+						(kliknij, aby zobaczyć)
+					</span>
+				)}
 			</h3>
 			<ResponsiveContainer width="100%" height={280} className="sm:!h-[350px]">
 				<PieChart>
@@ -64,9 +76,24 @@ export function CategoryChart({ data }: CategoryChartProps) {
 						paddingAngle={2}
 						dataKey="amount"
 						nameKey="label"
+						onClick={(_, index) => {
+							const entry = chartData[index];
+							if (entry && onCategoryClick && entry.category !== "other") {
+								onCategoryClick(entry.category as Category);
+							}
+						}}
+						style={{ cursor: onCategoryClick ? "pointer" : undefined }}
 					>
 						{chartData.map((entry) => (
-							<Cell key={entry.category} fill={entry.color} />
+							<Cell
+								key={entry.category}
+								fill={entry.color}
+								opacity={
+									activeCategory && entry.category !== activeCategory ? 0.25 : 1
+								}
+								strokeWidth={activeCategory === entry.category ? 2 : 0}
+								stroke={activeCategory === entry.category ? "#ffffff" : "none"}
+							/>
 						))}
 					</Pie>
 					<Tooltip

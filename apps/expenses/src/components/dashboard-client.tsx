@@ -7,7 +7,9 @@ import { FixedCostsTable } from "@/components/fixed-costs-table";
 import { MonthlyChart } from "@/components/monthly-chart";
 import { SummaryCards } from "@/components/summary-cards";
 import { TopCounterpartiesChart } from "@/components/top-counterparties-chart";
+import { TransactionDrawer } from "@/components/transaction-drawer";
 import { TrendChart } from "@/components/trend-chart";
+import type { Category } from "@/lib/categorize";
 import {
 	computeCategoryBreakdown,
 	computeFixedCosts,
@@ -45,6 +47,8 @@ export function DashboardClient({ transactions }: DashboardClientProps) {
 		account: "",
 	});
 
+	const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+
 	const filtered = useMemo(
 		() => filterTransactions(transactions, filters),
 		[transactions, filters],
@@ -78,24 +82,45 @@ export function DashboardClient({ transactions }: DashboardClientProps) {
 
 	const isYearView = filters.month === null;
 
+	const handleCategoryClick = (cat: Category) => {
+		setActiveCategory((prev) => (prev === cat ? null : cat));
+	};
+
+	const handleFiltersChange = (newFilters: DashboardFilters) => {
+		setFilters(newFilters);
+		setActiveCategory(null);
+	};
+
 	return (
 		<div className="space-y-4 sm:space-y-6">
 			<DashboardFilterBar
 				filters={filters}
-				onChange={setFilters}
+				onChange={handleFiltersChange}
 				transactions={transactions}
 			/>
 
 			<SummaryCards data={summary} perspective={filters.perspective} />
 
 			<div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-				<CategoryChart data={categoryData} />
+				<CategoryChart
+					data={categoryData}
+					activeCategory={activeCategory}
+					onCategoryClick={handleCategoryClick}
+				/>
 				{isYearView ? (
 					<MonthlyChart data={monthlyData} perspective={filters.perspective} />
 				) : (
 					<TopCounterpartiesChart data={topCounterparties} />
 				)}
 			</div>
+
+			{activeCategory && (
+				<TransactionDrawer
+					category={activeCategory}
+					transactions={filtered}
+					onClose={() => setActiveCategory(null)}
+				/>
+			)}
 
 			{isYearView && (
 				<div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
