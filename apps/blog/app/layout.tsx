@@ -1,25 +1,21 @@
-import type { LinksFunction } from "@remix-run/node";
-import {
-	Links,
-	Meta,
-	Outlet,
-	Scripts,
-	ScrollRestoration,
-} from "@remix-run/react";
+import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
-import stylesheet from "~/global.css?url";
-import MainLayout from "./ui/Layout";
+import "~/globals.css";
+import MainLayout from "~/ui/Layout";
 
-export const links: LinksFunction = () => [
-	{ rel: "stylesheet", href: stylesheet },
-];
+export const metadata: Metadata = {
+	title: "Franciszek Pawlak",
+	description: "Franciszek Pawlak IT",
+};
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+	children,
+}: Readonly<{
+	children: React.ReactNode;
+}>) {
 	return (
 		<html lang="en">
 			<head>
-				<meta charSet="utf-8" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="preconnect" href="https://fonts.cdnfonts.com/css/chomsky" />
 				<link
 					rel="preload"
@@ -40,19 +36,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 					rel="stylesheet"
 					href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap"
 				/>
-				<Meta />
-				<Links />
 			</head>
 			<body className="bg-black">
 				<MainLayout>{children}</MainLayout>
-				<ScrollRestoration />
-				<Scripts />
 				<Analytics />
 			</body>
 		</html>
 	);
-}
-
-export default function App() {
-	return <Outlet />;
 }

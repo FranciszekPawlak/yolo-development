@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import Link from "next/link";
 
 interface IProps {
 	title: string;
@@ -8,7 +8,7 @@ export const Header = ({ title }: IProps) => {
 	return (
 		<div className="flex items-start justify-between">
 			<Link
-				to="/"
+				href="/"
 				aria-label="Go back to home"
 				className="cursor-pointer rounded-full border-2 p-6 font-gothic duration-500 hover:bg-white"
 			/>

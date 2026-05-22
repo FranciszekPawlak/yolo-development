@@ -1,8 +1,8 @@
-import { json } from "@remix-run/node";
+import { NextResponse } from "next/server";
 import { sendEmail } from "~/api/mail/sendEmail.server";
 import { getBookSummary } from "~/api/openai/bookSummary.server";
 
-export async function loader({ request }: { request: Request }) {
+export async function GET(request: Request) {
 	const url = new URL(request.url);
 	const title = url.searchParams.get("title");
 	const author = url.searchParams.get("author");
@@ -18,7 +18,7 @@ export async function loader({ request }: { request: Request }) {
 	}
 
 	if (!title || !author) {
-		return json({
+		return NextResponse.json({
 			error: "Unable to generate summary at this moment. 😐",
 			data: null,
 		});
@@ -26,9 +26,9 @@ export async function loader({ request }: { request: Request }) {
 
 	try {
 		const result = await getBookSummary(title, author);
-		return json(result);
-	} catch (error) {
-		return json({
+		return NextResponse.json(result);
+	} catch {
+		return NextResponse.json({
 			error: "Unable to generate summary at this moment. 😐",
 			data: null,
 		});

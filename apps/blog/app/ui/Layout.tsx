@@ -1,21 +1,24 @@
-import { useLocation } from "@remix-run/react";
-import { useEffect, useState, useRef } from "react";
+"use client";
+
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-	const { pathname } = useLocation();
-	const backgroundVideo = pathname === "/photos/overview" || pathname === "/tech/overview";
+	const pathname = usePathname();
+	const backgroundVideo =
+		pathname === "/photos/overview" || pathname === "/tech/overview";
 	const [showScrollTop, setShowScrollTop] = useState(false);
 	const videoRef = useRef<HTMLVideoElement>(null);
 
 	const getBackgroundVideo = () => {
 		if (pathname === "/photos/overview") {
-			return "/background/photo.mp4"
+			return "/background/photo.mp4";
 		}
 		if (pathname === "/tech/overview") {
-			return "/background/tech.mp4"
+			return "/background/tech.mp4";
 		}
-		return ""
-	}
+		return "";
+	};
 
 	const scrollToTop = () => {
 		window.scrollTo({ top: 0, behavior: "smooth" });

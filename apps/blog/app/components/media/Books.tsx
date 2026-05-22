@@ -1,4 +1,6 @@
-import { Link } from "@remix-run/react";
+"use client";
+
+import Link from "next/link";
 import type { SanityDocument } from "@sanity/client";
 import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -22,7 +24,7 @@ export const Books = ({ data }: { data: SanityDocument[] }) => {
 	const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		const year = event.target.value;
 		if (year === "") {
-			filterItemsByRating(""); // Reset rating filter when changing year to "All years"
+			filterItemsByRating("");
 			setFilteredData(data);
 			setItems(data.slice(0, INFINITE_SCROLL_LIMIT));
 		} else {
@@ -33,7 +35,7 @@ export const Books = ({ data }: { data: SanityDocument[] }) => {
 	const handleRatingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		const rating = event.target.value;
 		if (rating === "") {
-			filterItemsByYear(""); // Reset year filter when changing rating to "All ratings"
+			filterItemsByYear("");
 			setFilteredData(data);
 			setItems(data.slice(0, INFINITE_SCROLL_LIMIT));
 		} else {
@@ -128,7 +130,7 @@ export const Books = ({ data }: { data: SanityDocument[] }) => {
 					>
 						<div className="flex flex-col justify-between p-2">
 							<span className="cursor-pointer text-left font-bold font-montserrat text-md text-white hover:underline lg:text-xl">
-								<Link to={item.url} target="_blank">
+								<Link href={item.url} target="_blank">
 									{item.title}
 								</Link>
 							</span>

@@ -1,19 +1,18 @@
-import { Link, useLoaderData } from "@remix-run/react";
-import { getPhotos } from "~/api/articles/articles";
+import Link from "next/link";
+import { getTech } from "~/api/articles/articles";
 import { getImage } from "~/api/image";
 import { Header } from "~/ui/Header";
 import { NothingToShow } from "~/ui/NothingToShow";
 
-export async function loader() {
-	return getPhotos();
-}
-export default function Overview() {
-	const posts = useLoaderData<typeof loader>();
+export default async function TechOverviewPage() {
+	const posts = await getTech();
 
 	return (
 		<div className="mx-auto max-w-[800px]">
-			<Header title="Photos" />
-			<span className="block mt-8 text-xs text-center w-full">My texts are not written by AI 😮</span>
+			<Header title="Tech" />
+			<span className="block mt-8 text-xs text-center w-full">
+				My texts are not written by AI 😮
+			</span>
 			<div className="mt-4 flex flex-col">
 				{posts.length > 0 ? (
 					posts.map((article) => (
@@ -23,7 +22,7 @@ export default function Overview() {
 						>
 							<div className="flex items-center">
 								<img
-									alt={"Article cover"}
+									alt="Article cover"
 									src={getImage(article.image)
 										.height(60)
 										.width(60)
@@ -49,7 +48,7 @@ export default function Overview() {
 							</div>
 							<Link
 								className="font-montserrat text-white hover:underline"
-								to={`/photos/${article.slug}`}
+								href={`/tech/${article.slug}`}
 							>
 								<svg
 									className="size-6"

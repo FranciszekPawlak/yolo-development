@@ -1,29 +1,28 @@
-import { Link, useLoaderData } from "@remix-run/react";
-import type { LoaderFunctionArgs } from "@vercel/remix";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getArticle } from "~/api/articles/articles";
 import { Avatar } from "~/ui/Avatar";
 import { BlockContent } from "~/ui/BlockContent";
 import { calculateReadingTime, formatReadingTime } from "~/lib/readingTime";
 
-export async function loader({ params }: LoaderFunctionArgs) {
-	if (!params.slug) {
-		throw new Response("Not Found", { status: 404 });
-	}
-	const article = (await getArticle(params.slug, "photos"))[0];
-	if (!article) {
-		throw new Response("Not Found", { status: 404 });
-	}
-	return article;
-}
+export default async function TechArticlePage({
+	params,
+}: {
+	params: Promise<{ slug: string }>;
+}) {
+	const { slug } = await params;
+	const article = (await getArticle(slug, "tech"))[0];
 
-export default function Article() {
-	const article = useLoaderData<typeof loader>();
+	if (!article) {
+		notFound();
+	}
+
 	const readingTime = calculateReadingTime(article.content);
 
 	return (
 		<div className="mx-auto max-w-[800px]">
 			<Link
-				to={"/photos/overview"}
+				href="/tech/overview"
 				className="inline-block cursor-pointer p-4 font-mono text-5xl duration-200 hover:scale-125"
 			>
 				{"<"}
@@ -31,9 +30,7 @@ export default function Article() {
 			<article className="mt-4 mb-8 ">
 				<div className="mb-4 flex items-center justify-between">
 					<div className="mr-2">
-						<h1 className="font-gothic text-3xl lg:text-5xl">
-							{article.title}
-						</h1>
+						<h1 className="font-gothic text-3xl lg:text-5xl">{article.title}</h1>
 						<span className="flex flex-wrap">
 							<span className="mr-4 font-bold">
 								{article.categories
@@ -45,9 +42,7 @@ export default function Article() {
 									updated at {new Date(article._updatedAt).toLocaleDateString()}
 								</span>
 							)}
-							<span className="italic">
-								{formatReadingTime(readingTime)}
-							</span>
+							<span className="italic">{formatReadingTime(readingTime)}</span>
 						</span>
 					</div>
 					<div>

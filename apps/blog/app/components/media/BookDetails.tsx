@@ -1,3 +1,5 @@
+"use client";
+
 import type { SanityDocument } from "@sanity/client";
 import { useEffect, useState } from "react";
 

@@ -1,15 +1,21 @@
-import { Link, useParams } from "@remix-run/react";
+"use client";
+
+import Link from "next/link";
 import type { PropsWithChildren } from "react";
 
 export const CategoryLink = ({
-	to,
+	href,
 	children,
 	active,
 	target,
-}: PropsWithChildren<{ to: string; active: boolean; target?: string }>) => {
+}: PropsWithChildren<{
+	href: string;
+	active: boolean;
+	target?: string;
+}>) => {
 	return (
 		<Link
-			to={to}
+			href={href}
 			target={target}
 			className={`ml-8 font-gothic text-lg ${active ? "hidden" : "block"}`}
 		>
@@ -18,19 +24,18 @@ export const CategoryLink = ({
 	);
 };
 
-export const Categories = () => {
-	const { type } = useParams();
+export const Categories = ({ type }: { type: string }) => {
 	return (
 		<div className="my-4">
 			<nav className="flex justify-end">
-				<CategoryLink to="/media/books" active={type === "books"}>
+				<CategoryLink href="/media/books" active={type === "books"}>
 					books
 				</CategoryLink>
-				<CategoryLink to="/media/games" active={type === "games"}>
+				<CategoryLink href="/media/games" active={type === "games"}>
 					games
 				</CategoryLink>
 				<CategoryLink
-					to="https://open.spotify.com/user/franekdzbanekk?si=c03db31e80c44445"
+					href="https://open.spotify.com/user/franekdzbanekk?si=c03db31e80c44445"
 					target="_blank"
 					active={false}
 				>

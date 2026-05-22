@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
-@source "../app/**/*.{js,jsx,ts,tsx}";
+@source "./**/*.{js,jsx,ts,tsx}";
 
 ::-webkit-scrollbar {
 	display: none;

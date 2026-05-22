@@ -1,6 +1,5 @@
-import { useLoaderData } from "@remix-run/react";
 import type { SanityDocument } from "@sanity/client";
-import type { LoaderFunctionArgs } from "@vercel/remix";
+import { notFound } from "next/navigation";
 import { getBooks } from "~/api/media/books";
 import { getGames } from "~/api/media/games";
 import { getMovies } from "~/api/media/movies";
@@ -10,41 +9,40 @@ import { Categories } from "~/components/media/Categories";
 import { Header } from "~/ui/Header";
 import { NothingToShow } from "~/ui/NothingToShow";
 
-export async function loader({ params }: LoaderFunctionArgs) {
-	let result: SanityDocument[] | null = null;
-	switch (params?.type?.toLowerCase()) {
+async function getMediaData(type: string): Promise<SanityDocument[] | null> {
+	switch (type.toLowerCase()) {
 		case "books":
-			result = await getBooks();
-			break;
+			return getBooks();
 		case "movies":
-			result = await getMovies();
-			break;
+			return getMovies();
 		case "series":
-			result = await getSeries();
-			break;
+			return getSeries();
 		case "games":
-			result = await getGames();
-			break;
+			return getGames();
 		default:
-			break;
+			return null;
 	}
-	if (!result) {
-		throw new Response("Not Found", { status: 404 });
-	}
-	return {
-		type: params.type?.toLowerCase() as string,
-		data: result,
-	};
 }
 
-export default function Media() {
-	const { type, data } = useLoaderData<typeof loader>();
+export default async function MediaPage({
+	params,
+}: {
+	params: Promise<{ type: string }>;
+}) {
+	const { type } = await params;
+	const data = await getMediaData(type);
+
+	if (!data) {
+		notFound();
+	}
+
+	const normalizedType = type.toLowerCase();
 
 	const getContentByType = () => {
 		if (data.length === 0) {
 			return <NothingToShow />;
 		}
-		if (type === "books") {
+		if (normalizedType === "books") {
 			return <Books data={data} />;
 		}
 		return null;
@@ -52,8 +50,8 @@ export default function Media() {
 
 	return (
 		<div>
-			<Header title={type} />
-			<Categories />
+			<Header title={normalizedType} />
+			<Categories type={normalizedType} />
 			{getContentByType()}
 		</div>
 	);
