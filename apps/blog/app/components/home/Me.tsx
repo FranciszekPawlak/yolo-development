@@ -9,16 +9,16 @@ export default function Me() {
 			</h1>
 			<div className="grid grid-cols-2 md:flex md:w-2/3 md:justify-around">
 				<p className="mt-2 text-center font-montserrat text-sm text-white duration-500 hover:scale-110 lg:text-lg">
-					#YOLODevelopment
+					#YOLO
+				</p>
+				<p className="mt-2 text-center font-montserrat text-sm text-white duration-500 hover:scale-110 lg:text-lg">
+					#AIProductDev
 				</p>
 				<p className="mt-2 text-center font-montserrat text-sm text-white duration-500 hover:scale-110 lg:text-lg">
 					#ShapeUp
 				</p>
 				<p className="mt-2 text-center font-montserrat text-sm text-white duration-500 hover:scale-110 lg:text-lg">
-					#FullStack
-				</p>
-				<p className="mt-2 text-center font-montserrat text-sm text-white duration-500 hover:scale-110 lg:text-lg">
-					#AI
+					#Moron
 				</p>
 			</div>
 		</div>
